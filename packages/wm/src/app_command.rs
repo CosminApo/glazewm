@@ -1,4 +1,4 @@
-use std::{iter, path::PathBuf};
+use std::{iter, path::PathBuf, thread::sleep, time::Duration};
 
 use anyhow::{bail, Context};
 use clap::{error::KindFormatter, Args, Parser, ValueEnum};
@@ -235,6 +235,10 @@ pub enum InvokeCommand {
   SetTilingDirection {
     #[clap(required = true)]
     tiling_direction: TilingDirection,
+  },
+  Wait{
+    #[clap(required = true)]
+    duration: u64,
   },
   WmCycleFocus {
     #[clap(long, default_value_t = false)]
@@ -636,6 +640,10 @@ impl InvokeCommand {
           config,
           tiling_direction.clone(),
         )
+      }
+      InvokeCommand::Wait { duration } => {
+        sleep(Duration::from_secs(*duration));
+        Ok(())
       }
       InvokeCommand::WmCycleFocus {
         omit_fullscreen,
